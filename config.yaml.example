@@ -1,7 +1,10 @@
 app:
   discord_api:
     token: ""
-    logging: true
+  
+  logging:
+    activate: true
+    level: INFO
   
   apache2:
     url: "https://localhost"
