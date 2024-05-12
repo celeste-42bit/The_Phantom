@@ -1,6 +1,7 @@
 app:
-  api:
+  discord_api:
     token: ""
+    logging: true
   
   apache2:
     url: "https://localhost"

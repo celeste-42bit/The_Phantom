@@ -1,22 +1,35 @@
-import discord
+from discord import *
+import logging
 import yaml
 import os
-
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print(f'Logged in as {self.user}!')
-        print(f'CWD: {os.getcwd}')
-    
-    async def on_message(self, message):
-        print(f'Message from {message.author}: {message.content}')
 
 global config
 with open('./config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
-intents = discord.Intents.default()
+intents = Intents.default()
 intents.message_content = True
+intents.typing = True
+intents.members = True
 
-client = MyClient(intents=intents)
+activity = Activity(name="over this server", type=ActivityType.watching)
 
-client.run(config['app']['api']['token'])
+client = Client(intents = intents)
+
+if(config['app']['discord_api']['logging']):
+    handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+else:
+    handler = None
+
+@client.event
+async def on_ready():
+    print(f'Logged in as {client.user} with ID: {client.application_id}')
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    pass
+
+client.run(config['app']['discord_api']['token'], log_handler=handler)
