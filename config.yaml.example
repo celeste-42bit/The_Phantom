@@ -1,0 +1,7 @@
+app:
+  api:
+    token: ""
+  
+  apache2:
+    url: "https://localhost"
+    port: 443

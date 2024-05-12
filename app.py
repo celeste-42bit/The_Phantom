@@ -1,5 +1,5 @@
 import discord
-import json
+import yaml
 import os
 
 class MyClient(discord.Client):
@@ -10,12 +10,13 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         print(f'Message from {message.author}: {message.content}')
 
+global config
+with open('./config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+
 intents = discord.Intents.default()
 intents.message_content = True
 
 client = MyClient(intents=intents)
-with open('~/.token', 'r') as tkn:
-    token = json.load(tkn)
-    tkn.close()
 
-client.run()
+client.run(config['app']['api']['token'])
