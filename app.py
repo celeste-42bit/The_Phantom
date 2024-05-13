@@ -54,6 +54,7 @@ async def roll(ctx, n: int):
 async def stop(ctx, passwd: str):
     if passwd == config['app']['security']['admin_passwd']:
         await ctx.send(f'Bot {bot.user.name} is shutting down!')
+        print('The bot is shutting down!')
         logging.info('Shutting down!')
         logging.shutdown
         time.sleep(5)
@@ -72,6 +73,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
         )
         embed.add_field(name='$help', value='The help command calls up this page, you are reading right now.', inline=False)
         embed.add_field(name='$roll <dice sides>', value='Roll a dice with a custom ammount of sides. Even weird ones ;)', inline=False)
+        embed.add_field(name='$stop <admin password>', value='Stops the bot. Please dont show the password to everyone... Use an admin channel!', inline=False)
         embed.set_author(name='Caeleste', icon_url=None)
 
         await self.get_destination().send(embed=embed)
