@@ -1,16 +1,20 @@
 app:
   discord_api:
     # This is your application token. You get it from "https://discord.com/developers/applications"
-    token: 
+    token:
     shard_count: 1
     # If shard_id is empty, it will be handled as 'None'
     shard_id:
   
   logging:
     activate: true
-    level: "DEBUG"
+    level: "INFO"
   
   # WIP. Disregard!
   webserver:
     url: "https://localhost"
     port: 443
+
+  security:
+    # This password is needed for admin commands
+    admin_passwd: "admin"
