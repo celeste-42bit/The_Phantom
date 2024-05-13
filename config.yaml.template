@@ -1,7 +1,7 @@
 app:
   discord_api:
     # This is your application token. You get it from "https://discord.com/developers/applications"
-    token: ""
+    token: 
     shard_count: 1
   
   logging:
