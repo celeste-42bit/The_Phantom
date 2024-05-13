@@ -32,7 +32,7 @@ if activate_logger:
 
 @bot.command()
 async def ping(ctx):
-    await ctx.send(f'Pong!\n\nI am a bot, logged in as {bot.user.name} with ID: {bot.user.id}.\nI am using the Discord API version {discord.__version__}.\nAnd how are you doing, human?')
+    await ctx.send(f'Pong!\n\nI am a bot, logged in as "{bot.user.name}" with ID: {bot.user.id}.\nI am using the Discord API version {discord.__version__}.\nAnd how are you doing, human?')
 
 @bot.event
 async def on_ready():

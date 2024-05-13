@@ -1,11 +1,14 @@
 app:
   discord_api:
+    # This is your application token. You get it from "https://discord.com/developers/applications"
     token: ""
+    shard_count: 1
   
   logging:
     activate: true
-    level: INFO
+    level: "DEBUG"
   
-  apache2:
+  # WIP. Disregard!
+  webserver:
     url: "https://localhost"
     port: 443
