@@ -1,64 +1,49 @@
-from discord import *
+import discord
+from discord.ext import commands
 import logging
 import yaml
 import os
 
+# the config YAML is made globally available
 global config
 with open('./config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
-intents = Intents.default()
+# Setting intents ('default()' enables defaults intents and keeps privileged intents disabled)
+intents = discord.Intents.default()
 intents.message_content = True
-intents.typing = True
+intents.typing = False
+intents.presences = False
 intents.members = True
 
-activity = Activity(name="over this server", type=ActivityType.watching)
+activity = discord.Activity(name="over this server", type=discord.ActivityType.watching)
 
-client = Client(intents = intents)
+bot = commands.Bot(command_prefix='$', intents=intents)
 
 # Following lines set up the logger
-activate_logging = config['app']['logging']['activate']
-logging_level = str(config['app']['logging']['level'])
+activate_logger = config['app']['logging']['activate']
+level = str(config['app']['logging']['level'])
 
-try:
-    if(activate_logging):
-        handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-    else:
-        handler = None
 
-    match logging_level:
-        case "DEBUG":
-            log_level = logging.DEBUG
-        case "INFO":
-            log_level = logging.INFO
-        case "WARN":
-            log_level = logging.WARNING
-        case "ERROR":
-            log_level = logging.ERROR
-        case "CRIT":
-            log_level = logging.CRITICAL
+if activate_logger:
+    handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+    logging.basicConfig(level=level, handlers=[handler])
 
-except:
-    print('There is an issue with the config.yaml file. Please check thy syntax!')
-    print('Logging has been disabled!')
-    handler = None
-    log_level = logging.INFO
 
-# Successful connection to Discord
-@client.event
+@bot.command()
+async def ping(ctx):
+    await ctx.send(f'Pong!\n\nI am a bot, logged in as {bot.user.name} with ID: {bot.user.id}.\nI am using the Discord API version {discord.__version__}.\nAnd how are you doing, human?')
+
+@bot.event
 async def on_ready():
-    print(f'Logged in as {client.user} with ID: {client.application_id}')
+    print(f'Connected to Discord as {bot.user.name} with ID: {bot.user.id}')
+    print(f'Running API version {discord.__version__}')
 
-# Received message in any chat
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+bot.run(config['app']['discord_api']['token'])
 
-    pass
-
-client.run(
-    config['app']['discord_api']['token'],
-    log_handler=handler,
-    log_level=log_level
-    )
+# Run
+#client.run(
+#    config['app']['discord_api']['token'],
+#    log_handler=handler,
+#    log_level=log_level
+#    )
