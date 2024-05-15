@@ -1,7 +1,7 @@
 # Secrets
 .token
 *.tkn
-*.yaml
+config.*
 
 # Logs
 *.log
