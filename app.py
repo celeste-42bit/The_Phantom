@@ -3,7 +3,6 @@ from discord.ext import commands
 import logging
 import yaml
 import random
-import time
 import re
 
 # the config YAML is made globally available
@@ -21,11 +20,14 @@ intents.members = True
 activity = discord.Activity(name="over this server", type=discord.ActivityType.watching)
 
 bot = commands.Bot(
-    command_prefix='$',
-    intents=intents,
-    activity=activity,
-    shard_count=config['app']['discord_api']['shard_count'],
-    shard_id=config['app']['discord_api']['shard_id']
+    command_prefix = '$',
+    intents = intents,
+    activity = activity,
+    case_insensitive = True,
+    owner_id = ['456175197415014403'],
+    shard_count = config['app']['discord_api']['shard_count'],
+    shard_id = config['app']['discord_api']['shard_id'],
+    status = discord.Status.online
     )
 
 # Following lines set up the logger
@@ -57,7 +59,7 @@ async def roll(ctx, die: str, amount: int):  # TODO Fix this! The code is garbag
     for roll in range(0, amount):
         result = random.randint(1, sides)
         output.append(result)
-        
+    # Take the output array, parse all numbers from it and join them seperated by spaces
     await ctx.send(f'This is how you rolled:\n\n{' '.join(re.findall(r'\d+', str(output)))}')
 
 # Custom help command, overriding the default help of discord.ext
