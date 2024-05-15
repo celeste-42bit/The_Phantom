@@ -14,7 +14,3 @@ app:
   webserver:
     url: "https://localhost"
     port: 443
-
-  security:
-    # This password is needed for admin commands
-    admin_passwd: "admin"

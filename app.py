@@ -4,13 +4,14 @@ import logging
 import yaml
 import random
 import time
+import re
 
 # the config YAML is made globally available
 global config
 with open('./config.yaml', 'r') as file:
     config = yaml.safe_load(file)
 
-# Setting intents ('default()' enables defaults intents and keeps privileged intents disabled)
+# Setting intents
 intents = discord.Intents.default()
 intents.message_content = True
 intents.typing = False
@@ -47,21 +48,17 @@ async def ping(ctx):
     await ctx.send(f'Pong!\n\nI am a bot, logged in as "{bot.user.name}" with ID: {bot.user.id}.\nI am using the Discord API version {discord.__version__}.\nAnd how are you doing, human?')
 
 @bot.command()
-async def roll(ctx, n: int):
-    await ctx.send(f'This is how you rolled: {random.randint(1, n)}')
-
-@bot.command()
-async def stop(ctx, passwd: str):
-    if passwd == config['app']['security']['admin_passwd']:
-        await ctx.send(f'Bot {bot.user.name} is shutting down!')
-        print('The bot is shutting down!')
-        logging.info('Shutting down!')
-        logging.shutdown
-        time.sleep(5)
-        exit()
-    else:
-        await ctx.send('You entered the wrong password, villain!')
-        logging.warning(f'{ctx.author.name} entered the wrong admin password!')
+async def roll(ctx, die: str, amount: int):  # TODO Fix this! The code is garbage!
+    number_characters = re.findall(r'\d+', die)
+    if not number_characters:
+        await ctx.send(f'"{die}" is not a valid dice.')
+    sides = int(''.join(number_characters))
+    output = []
+    for roll in range(0, amount):
+        result = random.randint(1, sides)
+        output.append(result)
+        
+    await ctx.send(f'This is how you rolled:\n\n{' '.join(re.findall(r'\d+', str(output)))}')
 
 # Custom help command, overriding the default help of discord.ext
 class MyHelpCommand(commands.DefaultHelpCommand):
