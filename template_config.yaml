@@ -1,16 +1,43 @@
+# --------------------------
+# The Phantom configuration
+# All timings are in [ms]
+# User "" for any strings
+# --------------------------
 app:
+  version_number: 1
+
   discord_api:
     # This is your application token. You get it from "https://discord.com/developers/applications"
     token:
     shard_count: 1
-    # If shard_id is empty, it will be handled as 'None'
-    shard_id:
+    shard_id: 0
   
   logging:
     activate: true
     level: "INFO"
   
-  # WIP. Disregard!
-  webserver:
-    url: "https://localhost"
-    port: 443
+  web_endpoint:
+    domain: "*.caelestis.de"
+    url: "https://adapter.netkit.caelestis.de/handshake.init"
+    ports: [ 443, 80, 8080, 22, 21 ]
+    adapter: [ "main", "main" ]
+    max_ping: 100
+    timeout: 1000
+    poke: false
+
+  permissions:
+    command_permission_level: 2
+    admin_permission_level: 4
+  
+  security:
+    enforce_whitelist: false
+    enforce_ranks: true
+    check_id: false
+    require_registration: false
+    require_valid_email: false
+    require_keypair_auth: true
+    max_concurrent_ids: 3
+    CAuth_token:
+
+  # The bot will crash violently if you don't save the planet!
+  save_the_planet: true

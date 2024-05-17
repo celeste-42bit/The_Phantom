@@ -32,7 +32,7 @@ bot = commands.Bot(
     shard_id = config['app']['discord_api']['shard_id']
     )
 
-# Following lines set up the logger
+# Set up the logger (logging and internal)
 handler = None
 level = None
 if config['app']['logging']['activate']:
