@@ -17,17 +17,19 @@ intents.typing = False
 intents.presences = False
 intents.members = True
 
+command_prefix = '$'
 activity = discord.Activity(name="over this server", type=discord.ActivityType.watching)
+status = discord.Status.online
 
 bot = commands.Bot(
-    command_prefix = '$',
+    command_prefix = command_prefix,
     intents = intents,
     activity = activity,
+    stauts = status,
     case_insensitive = True,
-    owner_id = ['456175197415014403'],
+    owner_id = ['456175197415014403', '287663053707673600'],  # caelestia-42bit (https://github.com/caelestia-42bit), ShaeCalmine
     shard_count = config['app']['discord_api']['shard_count'],
-    shard_id = config['app']['discord_api']['shard_id'],
-    status = discord.Status.online
+    shard_id = config['app']['discord_api']['shard_id']
     )
 
 # Following lines set up the logger
@@ -44,36 +46,113 @@ async def on_ready():
     print(f'Connected to Discord as {bot.user.name} with ID: {bot.user.id}')
     print(f'Running API version {discord.__version__}')
     print(f'Logging: {config["app"]["logging"]["activate"]}, Level: {level}')
+    logging.debug(config)
 
-@bot.command()
+# ping the bot
+@bot.command(name='ping')
 async def ping(ctx):
     await ctx.send(f'Pong!\n\nI am a bot, logged in as "{bot.user.name}" with ID: {bot.user.id}.\nI am using the Discord API version {discord.__version__}.\nAnd how are you doing, human?')
+    logging.info('PING!')
 
-@bot.command()
+# roll custom ammount of multi-sided dice
+@bot.command(name='roll')
 async def roll(ctx, die: str, amount: int):  # TODO Fix this! The code is garbage!
-    number_characters = re.findall(r'\d+', die)
-    if not number_characters:
+    number_characters = int(re.findall(r'\d+', die))
+
+    if not number_characters or number_characters < 2:
         await ctx.send(f'"{die}" is not a valid dice.')
+        return
+
     sides = int(''.join(number_characters))
     output = []
-    for roll in range(0, amount):
+    for result in range(0, amount):  # TODO is that correct?!?!?!
         result = random.randint(1, sides)
         output.append(result)
-    # Take the output array, parse all numbers from it and join them seperated by spaces
+    # TODO SyntaxError: unexpected character after line continuation character
     await ctx.send(f'This is how you rolled:\n\n{' '.join(re.findall(r'\d+', str(output)))}')
+
+# change bot activity
+@bot.command(name='chact')
+async def chact(ctx, activity):
+    try:
+        bot.activity = discord.Activity(name=activity, type=discord.ActivityType.custom)
+    except:
+        await ctx.send(f'ERROR: Failed to change the {bot.user.name}\'s activity.')
+        logging.error(f'Failed to process chactivity request by {ctx.user.name}')
+
+    await ctx.send(f'Changed {bot.user.name}\'s activity to: "{activity}"')
+    logging.info(f'{ctx.user.name} changed {bot.user.name}\'s activity to: "{activity}"')
+
+# change bot status
+@bot.command(name='chst')
+async def chst(ctx, status):
+    try:
+        match status:
+            case "dnd":
+                bot.status = discord.Status.dnd
+            case "online":
+                bot.status = discord.Status.online
+            case "offline":
+                bot.status = discord.Status.offline
+            case "idle":
+                bot.status = discord.Status.idle
+    except:
+        await ctx.send(f'There was an issue with setting {bot.user.name}\'s status to "{status}"')
+        return
+
+# Shutdown bot (owner)
+@bot.command(name='shutdown')
+@bot.is_owner()
+async def shutdown(ctx):
+    await ctx.send(f'{ctx.user.name} issued the bot.close() command. Shutting down!')
+    logging.info(f'{ctx.user.name} issued the bot.close() command.')
+    logging.shutdown
+    await bot.close()
 
 # Custom help command, overriding the default help of discord.ext
 class MyHelpCommand(commands.DefaultHelpCommand):
     async def send_bot_help(self, mapping):
         embed = discord.Embed(
-            title='The Phantom Support',
+            title=f'{bot.user.name}',
             description="For meta information, refer to the documentation on https://github.com/caelestia-42bit/The_Phantom",
-            color=discord.Color.brand_red()
+            color=discord.Color.brand_red(),
+            url=None,
+            EmbedType='rich'
         )
-        embed.add_field(name='$help', value='The help command calls up this page, you are reading right now.', inline=False)
-        embed.add_field(name='$roll <dice sides>', value='Roll a dice with a custom ammount of sides. Even weird ones ;)', inline=False)
-        embed.add_field(name='$stop <admin password>', value='Stops the bot. Please dont show the password to everyone... Use an admin channel!', inline=False)
-        embed.set_author(name='Caeleste', icon_url=None)
+        embed.add_field(
+            name=f'{command_prefix}help',
+            value='The help command calls up this page, you are reading right now.',
+            inline=False
+            )
+        embed.add_field(
+            name=f'{command_prefix}ping',
+            value='Pokes the bot...',
+            inline=False
+            )
+        embed.add_field(
+            name=f'{command_prefix}roll <dice sides>',
+            value='Roll a dice with a custom ammount of sides. Even weird ones ;)',
+            inline=False
+            )
+        embed.add_field(
+            name=f'{command_prefix}stop <admin password>',
+            value='Stops the bot. Please dont show the password to everyone... Use an admin channel!',
+            inline=False
+            )
+        embed.add_field(
+            name=f'{command_prefix}chact <activity>',
+            value='Changes the bots activity callout.',
+            inline=False
+            )
+        embed.add_field(
+            name=f'{command_prefix}chst <status>',
+            value='Changes the bots status. Select either online, offline, idle, or dnd.',
+            inline=False
+            )
+        embed.set_author(
+            name=f'{bot.user.name}',
+            icon_url=None
+            )
 
         await self.get_destination().send(embed=embed)
 bot.help_command = MyHelpCommand()
