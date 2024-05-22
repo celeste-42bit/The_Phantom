@@ -69,7 +69,9 @@ async def roll(ctx, die: str, amount: int):  # TODO Fix this! The code is garbag
         result = random.randint(1, sides)
         output.append(result)
     # TODO SyntaxError: unexpected character after line continuation character
-    await ctx.send(f'This is how you rolled:\n\n{' '.join(re.findall(r'\d+', str(output)))}')
+    output = re.findall(r'\d+', str(output))
+    output = ''.join(output)
+    await ctx.send(f'This is how you rolled:\n\n{output}')
 
 # change bot activity
 @bot.command(name='chact')
@@ -102,7 +104,7 @@ async def chst(ctx, status):
 
 # Shutdown bot (owner)
 @bot.command(name='shutdown')
-@bot.is_owner()
+@commands.is_owner()
 async def shutdown(ctx):
     await ctx.send(f'{ctx.user.name} issued the bot.close() command. Shutting down!')
     logging.info(f'{ctx.user.name} issued the bot.close() command.')
