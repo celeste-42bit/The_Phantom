@@ -15,7 +15,8 @@ app:
   logging:
     activate: true
     level: "INFO"
-  
+
+# Ignore. WIP.
   web_endpoint:
     domain: "*.caelestis.de"
     url: "https://adapter.netkit.caelestis.de/handshake.init"

@@ -56,10 +56,11 @@ async def ping(ctx):
 
 # roll custom ammount of multi-sided dice
 @bot.command(name='roll')
-async def roll(ctx, die: str, amount: int):  # TODO Fix this! The code is garbage!
-    number_characters = int(re.findall(r'\d+', die))
+async def roll(ctx, die: str, amount: int):
+    # TODO There is an issue with conversion. re.findall returns a list. Int is needed!
+    number_characters = re.findall(r'\d+', die)
 
-    if not number_characters or number_characters < 2:
+    if not number_characters or number_characters < 2:  # Comparison only works between congruent types!!! (Error: list < int)
         await ctx.send(f'"{die}" is not a valid dice.')
         return
 
@@ -119,40 +120,39 @@ class MyHelpCommand(commands.DefaultHelpCommand):
             description="For meta information, refer to the documentation on https://github.com/caelestia-42bit/The_Phantom",
             color=discord.Color.brand_red(),
             url=None,
-            EmbedType='rich'
         )
         embed.add_field(
             name=f'{command_prefix}help',
             value='The help command calls up this page, you are reading right now.',
-            inline=False
+            inline=True
             )
         embed.add_field(
             name=f'{command_prefix}ping',
             value='Pokes the bot...',
-            inline=False
+            inline=True
             )
         embed.add_field(
             name=f'{command_prefix}roll <dice sides>',
             value='Roll a dice with a custom ammount of sides. Even weird ones ;)',
-            inline=False
+            inline=True
             )
         embed.add_field(
             name=f'{command_prefix}stop <admin password>',
             value='Stops the bot. Please dont show the password to everyone... Use an admin channel!',
-            inline=False
+            inline=True
             )
         embed.add_field(
             name=f'{command_prefix}chact <activity>',
             value='Changes the bots activity callout.',
-            inline=False
+            inline=True
             )
         embed.add_field(
             name=f'{command_prefix}chst <status>',
             value='Changes the bots status. Select either online, offline, idle, or dnd.',
-            inline=False
+            inline=True
             )
         embed.set_author(
-            name=f'{bot.user.name}',
+            name=f'Created by The Phantasm Bot Projects',
             icon_url=None
             )
 
