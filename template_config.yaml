@@ -40,5 +40,5 @@ app:
     max_concurrent_ids: 3
     CAuth_token:
 
-  # The bot will crash violently if you don't save the planet!
-  save_the_planet: true
+  dice_roller:
+    valid_dice: [2, 4, 6, 8, 12, 10, 20]

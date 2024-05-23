@@ -47,32 +47,33 @@ async def on_ready():
     print(f'Running API version {discord.__version__}')
     print(f'Logging: {config["app"]["logging"]["activate"]}, Level: {level}')
     logging.debug(config)
+    return
 
 # ping the bot
 @bot.command(name='ping')
 async def ping(ctx):
     await ctx.send(f'Pong!\n\nI am a bot, logged in as "{bot.user.name}" with ID: {bot.user.id}.\nI am using the Discord API version {discord.__version__}.\nAnd how are you doing, human?')
     logging.info('PING!')
+    return
 
 # roll custom ammount of multi-sided dice
+# TODO Check for the right amount of arguments passed! (errors out)
 @bot.command(name='roll')
-async def roll(ctx, die: str, amount: int):
-    # TODO There is an issue with conversion. re.findall returns a list. Int is needed!
-    number_characters = re.findall(r'\d+', die)
-
-    if not number_characters or number_characters < 2:  # Comparison only works between congruent types!!! (Error: list < int)
-        await ctx.send(f'"{die}" is not a valid dice.')
+async def roll(ctx, amount: str, dice: str):
+    valid_dice = config['app']['dice_roller']['valid_dice']
+    if not dice.startswith('d') or not dice[1:].isdigit() or not any(str(substring) in dice[1:] for substring in valid_dice):
+        await ctx.send(f'"{dice}" is not a valid dice. A diece begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, valid_dice))}.')
         return
-
-    sides = int(''.join(number_characters))
-    output = []
-    for result in range(0, amount):  # TODO is that correct?!?!?!
-        result = random.randint(1, sides)
-        output.append(result)
-    # TODO SyntaxError: unexpected character after line continuation character
-    output = re.findall(r'\d+', str(output))
-    output = ''.join(output)
-    await ctx.send(f'This is how you rolled:\n\n{output}')
+    if not amount.isdigit():
+        await ctx.send(f'{amount} is not a valid dice amount... obviously.')
+        return
+    else: amount = int(amount)
+    if amount > 500 or amount < 1:
+        await ctx.send(f'{amount} is too high or too low.')
+        return
+    rolls = [random.randint(1, int(dice[1:])) for _ in range(amount)]
+    await ctx.send(f'{", ".join(map(str, rolls))}')
+    return
 
 # change bot activity
 @bot.command(name='chact')
@@ -80,11 +81,11 @@ async def chact(ctx, activity):
     try:
         bot.activity = discord.Activity(name=activity, type=discord.ActivityType.custom)
     except:
-        await ctx.send(f'ERROR: Failed to change the {bot.user.name}\'s activity.')
+        await ctx.send(f'Failed to change the {bot.user.name}\'s activity.')
         logging.error(f'Failed to process chactivity request by {ctx.user.name}')
-
-    await ctx.send(f'Changed {bot.user.name}\'s activity to: "{activity}"')
+    
     logging.info(f'{ctx.user.name} changed {bot.user.name}\'s activity to: "{activity}"')
+    return
 
 # change bot status
 @bot.command(name='chst')
