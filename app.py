@@ -89,6 +89,7 @@ async def chact(ctx, activity):
 
 # change bot status
 @bot.command(name='chst')
+@commands.is_owner()
 async def chst(ctx, status):
     try:
         match status:
