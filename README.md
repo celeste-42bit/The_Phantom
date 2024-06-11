@@ -1,4 +1,4 @@
-# the_phantom
+# The Phantom v0.0.1 by The Phantasm Bot Projects
 
 ## Introduction
 
@@ -8,11 +8,11 @@ I am planning to expand the functionality so far, that other TTRPG servers can u
 
 ## Functions
 
-<bold>Session planning</bold></br>
+<bold>Session planning (TODO)</bold></br>
 
-<bold>Voting system</bold></br>
+<bold>Voting system (TODO)</bold></br>
 
-<bold>Dice roller</bold></br>
+<bold>Dice roller (WIP)</bold></br>
 
 ## Quickstart guide
 

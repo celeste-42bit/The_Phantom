@@ -56,6 +56,19 @@ async def ping(ctx):
     logging.info('PING!')
     return
 
+# say hi
+@bot.command(name='hi')
+async def hi(ctx):
+    await ctx.send(f'Hello, human!')
+
+# test command, just for me
+@bot.command(name='test')
+async def test(ctx, *args):
+    arguments = ', '.join(args)
+    await ctx.send(f'{len(args)} arguments: {arguments}')
+
+
+
 # roll custom ammount of multi-sided dice
 # TODO Check for the right amount of arguments passed! (errors out)
 @bot.command(name='roll')
@@ -75,6 +88,9 @@ async def roll(ctx, amount: str, dice: str):
     await ctx.send(f'{", ".join(map(str, rolls))}')
     return
 
+
+
+"""
 # change bot activity
 @bot.command(name='chact')
 async def chact(ctx, activity):
@@ -86,10 +102,10 @@ async def chact(ctx, activity):
     
     logging.info(f'{ctx.user.name} changed {bot.user.name}\'s activity to: "{activity}"')
     return
-
+"""
+"""
 # change bot status
 @bot.command(name='chst')
-@commands.is_owner()
 async def chst(ctx, status):
     try:
         match status:
@@ -104,7 +120,7 @@ async def chst(ctx, status):
     except:
         await ctx.send(f'There was an issue with setting {bot.user.name}\'s status to "{status}"')
         return
-
+"""
 # Shutdown bot (owner)
 @bot.command(name='shutdown')
 @commands.is_owner()
@@ -134,8 +150,8 @@ class MyHelpCommand(commands.DefaultHelpCommand):
             inline=True
             )
         embed.add_field(
-            name=f'{command_prefix}roll <dice sides>',
-            value='Roll a dice with a custom ammount of sides. Even weird ones ;)',
+            name=f'{command_prefix}roll <dice amount> <dice type>',
+            value=f'Roll a dice. A diece begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, config['app']['dice_roller']['valid_dice']))}',
             inline=True
             )
         embed.add_field(
