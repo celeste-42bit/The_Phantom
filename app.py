@@ -151,7 +151,7 @@ class MyHelpCommand(commands.DefaultHelpCommand):
             )
         embed.add_field(
             name=f'{command_prefix}roll <dice amount> <dice type>',
-            value=f'Roll a dice. A diece begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, config['app']['dice_roller']['valid_dice']))}',
+            value=f'Roll a dice. A diece begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, config["app"]["dice_roller"]["valid_dice"]))}',
             inline=True
             )
         embed.add_field(
