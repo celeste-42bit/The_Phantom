@@ -68,7 +68,6 @@ async def test(ctx, *args):
     await ctx.send(f'{len(args)} arguments: {arguments}')
 
 
-
 # roll custom ammount of multi-sided dice
 # TODO Check for the right amount of arguments passed! (errors out)
 @bot.command(name='roll')
@@ -141,22 +140,17 @@ class MyHelpCommand(commands.DefaultHelpCommand):
         )
         embed.add_field(
             name=f'{command_prefix}help',
-            value='The help command calls up this page, you are reading right now.',
+            value='The help command calls up this page, you are reading right now. Duh.',
             inline=True
             )
         embed.add_field(
             name=f'{command_prefix}ping',
-            value='Pokes the bot...',
+            value='Poke the bot...',
             inline=True
             )
         embed.add_field(
             name=f'{command_prefix}roll <dice amount> <dice type>',
             value=f'Roll a dice. A diece begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, config["app"]["dice_roller"]["valid_dice"]))}',
-            inline=True
-            )
-        embed.add_field(
-            name=f'{command_prefix}stop <admin password>',
-            value='Stops the bot. Please dont show the password to everyone... Use an admin channel!',
             inline=True
             )
         embed.add_field(
