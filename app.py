@@ -17,16 +17,22 @@ intents.typing = False
 intents.presences = False
 intents.members = True
 
-command_prefix = '$'
+command_prefix = '/'
+help_command = commands.DefaultHelpCommand(
+    no_category = 'Commands'
+)
+description = ''
 activity = discord.Activity(name="over this server", type=discord.ActivityType.watching)
 status = discord.Status.online
 
 bot = commands.Bot(
-    command_prefix = command_prefix,
+    command_prefix = commands.when_mentioned_or(command_prefix),
     intents = intents,
     activity = activity,
     stauts = status,
     case_insensitive = True,
+    help_command = help_command,
+    description = description,
     owner_id = ['456175197415014403', '287663053707673600'],  # caelestia-42bit (https://github.com/caelestia-42bit), ShaeCalmine
     shard_count = config['app']['discord_api']['shard_count'],
     shard_id = config['app']['discord_api']['shard_id']
@@ -55,6 +61,18 @@ async def ping(ctx):
     await ctx.send(f'Pong!\n\nI am a bot, logged in as "{bot.user.name}" with ID: {bot.user.id}.\nI am using the Discord API version {discord.__version__}.\nAnd how are you doing, human?')
     logging.info('PING!')
     return
+
+@bot.command(name='cookie')
+async def cookie(ctx, amount=1):
+    cookies = []
+    for _ in range(amount):
+        cookies.append('🍪')
+    await ctx.send(str(" ".join(cookies)))
+
+@bot.command(name='parse')
+async def parse(ctx, *args):
+    await ctx.send(args)
+
 
 # say hi
 @bot.command(name='hi')
@@ -129,6 +147,7 @@ async def shutdown(ctx):
     logging.shutdown
     await bot.close()
 
+'''
 # Custom help command, overriding the default help of discord.ext
 class MyHelpCommand(commands.DefaultHelpCommand):
     async def send_bot_help(self, mapping):
@@ -170,9 +189,12 @@ class MyHelpCommand(commands.DefaultHelpCommand):
 
         await self.get_destination().send(embed=embed)
 bot.help_command = MyHelpCommand()
+'''
 
-bot.run(
-    config['app']['discord_api']['token'],
-    log_handler=handler,
-    log_level=level
-    )
+if __name__ == "__main__":
+    print('running...')
+    bot.run(
+        config['app']['discord_api']['token'],
+        log_handler=handler,
+        log_level=level
+        )
