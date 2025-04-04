@@ -38,9 +38,11 @@ Install all requirements from "requirements.txt":
 python -m pip install -r "requirements.txt"
 ```
 
-Lastly, set up your config file using the instructions provided withing the file and rename it (have your bots OAuth2 token ready):
+Lastly, set up your config file using the instructions provided within the file and rename it (have your bots OAuth2 token ready):
 ```bash
 mv config.yaml.template ./config.yaml
+
+nano ./config.yaml
 ```
 
 ## Launching
