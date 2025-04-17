@@ -1,3 +1,10 @@
+# --------------------------------------------------
+# The Phantom Discord Bot
+# By: celeste-42bit & The Phantasm Bot Projects
+# Project date: 17/04/2025
+# License: (C) 2020-2025 celeste-42bit; MIT
+# --------------------------------------------------
+
 import discord
 from discord.ext import commands
 import logging
