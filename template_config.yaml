@@ -41,4 +41,4 @@ app:
     CAuth_token:
 
   dice_roller:
-    valid_dice: [2, 4, 6, 8, 12, 10, 20]
+    valid_dice: [2, 4, 6, 8, 10, 12, 20]

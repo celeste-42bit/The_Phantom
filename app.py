@@ -92,6 +92,8 @@ async def test(ctx, *args):
     arguments = ', '.join(args)
     await ctx.send(f'{len(args)} arguments: {arguments}')
 
+"""
+# OLD DICE ROLLER
 
 # roll custom ammount of multi-sided dice
 # TODO Check for the right amount of arguments passed! (errors out)
@@ -99,8 +101,31 @@ async def test(ctx, *args):
 async def roll(ctx, amount: str, dice: str):
     valid_dice = config['app']['dice_roller']['valid_dice']
     if not dice.startswith('d') or not dice[1:].isdigit() or not any(str(substring) in dice[1:] for substring in valid_dice):
-        await ctx.send(f'"{dice}" is not a valid dice. A diece begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, valid_dice))}.')
+        await ctx.send(f'"{dice}" is not a valid dice. A dice begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, valid_dice))}.')
         return
+    if not amount.isdigit():
+        await ctx.send(f'{amount} is not a valid dice amount... obviously.')
+        return
+    else: amount = int(amount)
+    if amount > 500 or amount < 1:
+        await ctx.send(f'{amount} is too high or too low.')
+        return
+    rolls = [random.randint(1, int(dice[1:])) for _ in range(amount)]
+    await ctx.send(f'{", ".join(map(str, rolls))}')
+    return
+"""
+
+# TODO Test!!!!!!!!!
+@bot.command(name='roll')
+async def roll(ctx, amount: str, dice: str):
+    valid_dice = config['app']['dice_roller']['valid_dice']
+    if not dice.startswith('d') or not dice[1:].isdigit():
+        if not valid_dice:  # when a list is treated as a bool, it returns true if something is in it and false otherwise
+            await ctx.send(f'"{dice}" is not a valid dice. A dice begins with "d" followed by a number of sides')
+            return
+        if valid_dice and not any(str(substring) in dice[1:] for substring in valid_dice):
+            await ctx.send(f'"{dice}" is not a valid dice. A dice begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, valid_dice))}.')
+            return
     if not amount.isdigit():
         await ctx.send(f'{amount} is not a valid dice amount... obviously.')
         return
@@ -114,37 +139,10 @@ async def roll(ctx, amount: str, dice: str):
 
 
 
-"""
-# change bot activity
-@bot.command(name='chact')
-async def chact(ctx, activity):
-    try:
-        bot.activity = discord.Activity(name=activity, type=discord.ActivityType.custom)
-    except:
-        await ctx.send(f'Failed to change the {bot.user.name}\'s activity.')
-        logging.error(f'Failed to process chactivity request by {ctx.user.name}')
-    
-    logging.info(f'{ctx.user.name} changed {bot.user.name}\'s activity to: "{activity}"')
-    return
-"""
-"""
-# change bot status
-@bot.command(name='chst')
-async def chst(ctx, status):
-    try:
-        match status:
-            case "dnd":
-                bot.status = discord.Status.dnd
-            case "online":
-                bot.status = discord.Status.online
-            case "offline":
-                bot.status = discord.Status.offline
-            case "idle":
-                bot.status = discord.Status.idle
-    except:
-        await ctx.send(f'There was an issue with setting {bot.user.name}\'s status to "{status}"')
-        return
-"""
+
+
+
+
 # Shutdown bot (owner)
 @bot.command(name='shutdown')
 @commands.is_owner()
