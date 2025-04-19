@@ -40,7 +40,7 @@ bot = commands.Bot(
     case_insensitive = True,
     help_command = help_command,
     description = description,
-    owner_id = ['456175197415014403', '287663053707673600'],  # caelestia-42bit (https://github.com/caelestia-42bit), ShaeCalmine
+    owner_id = ['456175197415014403', '287663053707673600'],  # celeste-42bit (https://github.com/celeste-42bit), ShaeCalmine
     shard_count = config['app']['discord_api']['shard_count'],
     shard_id = config['app']['discord_api']['shard_id']
     )
@@ -81,6 +81,7 @@ async def parse(ctx, *args):
     await ctx.send(args)
 
 
+
 # say hi
 @bot.command(name='hi')
 async def hi(ctx):
@@ -92,55 +93,54 @@ async def test(ctx, *args):
     arguments = ', '.join(args)
     await ctx.send(f'{len(args)} arguments: {arguments}')
 
-"""
-# OLD DICE ROLLER
 
-# roll custom ammount of multi-sided dice
-# TODO Check for the right amount of arguments passed! (errors out)
+
 @bot.command(name='roll')
-async def roll(ctx, amount: str, dice: str):
+async def roll(ctx, *args):
+    args = list(args)
     valid_dice = config['app']['dice_roller']['valid_dice']
-    if not dice.startswith('d') or not dice[1:].isdigit() or not any(str(substring) in dice[1:] for substring in valid_dice):
-        await ctx.send(f'"{dice}" is not a valid dice. A dice begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, valid_dice))}.')
+
+    if len(args) != 2:  # must have 2 args
+        await ctx.send('❌ Please provide 2 arguments. For example "/roll 5 d20"')
         return
-    if not amount.isdigit():
-        await ctx.send(f'{amount} is not a valid dice amount... obviously.')
+
+    if not str(args[0]).isdigit():  # amount must be number
+        await ctx.send(f'❌ You can\'t roll "{args[0]}" dice... obviously!')
         return
-    else: amount = int(amount)
-    if amount > 500 or amount < 1:
-        await ctx.send(f'{amount} is too high or too low.')
+
+    amount = int(args[0])
+
+    if not str(args[1]).startswith('d') or not str(args[1][1:]).isdigit():  # dice must start with 'd' followed by a number
+        await ctx.send(f'❌ "{args[1]}" is not a valid dice. A dice starts with "d" followed by a number, like "d20"!')
         return
-    rolls = [random.randint(1, int(dice[1:])) for _ in range(amount)]
-    await ctx.send(f'{", ".join(map(str, rolls))}')
-    return
-"""
 
-# TODO Test!!!!!!!!!
-@bot.command(name='roll')
-async def roll(ctx, amount: str, dice: str):
-    valid_dice = config['app']['dice_roller']['valid_dice']
-    if not dice.startswith('d') or not dice[1:].isdigit():
-        if not valid_dice:  # when a list is treated as a bool, it returns true if something is in it and false otherwise
-            await ctx.send(f'"{dice}" is not a valid dice. A dice begins with "d" followed by a number of sides')
-            return
-        if valid_dice and not any(str(substring) in dice[1:] for substring in valid_dice):
-            await ctx.send(f'"{dice}" is not a valid dice. A dice begins with "d" followed by one of the following numbers of sides: {", ".join(map(str, valid_dice))}.')
-            return
-    if not amount.isdigit():
-        await ctx.send(f'{amount} is not a valid dice amount... obviously.')
+    dice_sides = int(args[1][1:])
+
+    if amount < 1:  # prevent 0 dice
+        await ctx.send('❌ Congrats, you rolled a critical NOTHING! 🥳')
         return
-    else: amount = int(amount)
-    if amount > 500 or amount < 1:
-        await ctx.send(f'{amount} is too high or too low.')
+
+    if amount > config['app']['dice_roller']['max_dice_amount'] or amount > 1000:  # prevent absurd amounts of dice
+        await ctx.send('❌ Whoaaa, chill buddy! That\'s a lot of dice!')
         return
-    rolls = [random.randint(1, int(dice[1:])) for _ in range(amount)]
-    await ctx.send(f'{", ".join(map(str, rolls))}')
-    return
 
+    if dice_sides > 1000000:
+        await ctx.send('❌ That\'s a lot of sides!')
+        return
 
+    if not valid_dice:  # if valid_dice is empty, just roll
+        await ctx.send(f'{", ".join(map(str, roll_dice(amount, dice_sides)))}')
+        return
 
+    if dice_sides not in valid_dice:  # if valid_dice is not empty and the requested dice is not in valid_dice, error out
+        valid_dice_message = ", ".join(map(str, config['app']['dice_roller']['valid_dice']))
+        await ctx.send(f'❌ The GM is a boring person and only allows d{valid_dice_message}.')
+        return
 
+    await ctx.send(f'{", ".join(map(str, roll_dice(amount, dice_sides)))}')
 
+def roll_dice(amount: int, dice_sides: int):
+    return [random.randint(1, dice_sides) for _ in range(amount)]
 
 
 # Shutdown bot (owner)

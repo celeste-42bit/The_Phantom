@@ -42,3 +42,4 @@ app:
 
   dice_roller:
     valid_dice: [2, 4, 6, 8, 10, 12, 20]
+    max_dice_amount: 100
