@@ -19,7 +19,7 @@ app:
 # Ignore. WIP.
   web_endpoint:
     domain: "*.caelestis.de"
-    url: "https://adapter.netkit.caelestis.de/handshake.init"
+    url: "https://adapter.netkit.ivory-tower.eu/handshake.init"
     ports: [ 443, 80, 8080, 22, 21 ]
     adapter: [ "main", "main" ]
     max_ping: 100
