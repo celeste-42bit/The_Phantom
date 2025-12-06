@@ -62,6 +62,7 @@ async def on_ready():
     logging.debug(config)
     return
 
+
 # ping the bot
 @bot.command(name='ping')
 async def ping(ctx):
@@ -80,24 +81,71 @@ async def cookie(ctx, amount=1):
 async def parse(ctx, *args):
     await ctx.send(args)
 
-
-
 # say hi
 @bot.command(name='hi')
 async def hi(ctx):
     await ctx.send(f'Hello, human!')
 
-# test command, just for me
-@bot.command(name='test')
-async def test(ctx, *args):
-    arguments = ', '.join(args)
-    await ctx.send(f'{len(args)} arguments: {arguments}')
 
+# ------------------ VtM Dice Roller ------------------
 
+import random
 
-@bot.command(name='roll')
-async def roll(ctx, *args):
-    pass
+NORMAL_EMOJIS = {
+    "success": ":success:",
+    "failure": ":fail:",
+    "critical_failure": ":bestialfail:",
+    "critical_success": ":crit:",
+}
+
+HUNGER_EMOJIS = {
+    "success": ":redsuccess:",
+    "failure": ":redfail:",
+    "critical_failure": ":bestialfail:",  # same symbol
+    "critical_success": ":redcrit:",
+}
+
+def eval_die(value: int) -> str:
+    if value == 1:
+        return "critical_failure"
+    elif 2 <= value <= 5:
+        return "failure"
+    elif 6 <= value <= 9:
+        return "success"
+    elif value == 10:
+        return "critical_success"
+
+# -------------------------------------------------------------------------------------- DICE ROLLER --------------------------------------------------------------------------------
+@bot.tree.command(name="roll", description="Roll Vampire: The Masquerade dice (d10 only)")
+@discord.app_commands.describe(
+    dice_amount="How many dice total?",
+    hunger="How many hunger dice?"
+)
+async def roll(interaction: discord.Interaction, dice_amount: int, hunger: int):
+
+    if dice_amount <= 0:
+        return await interaction.response.send_message("You must roll at least 1 die.", ephemeral=True)
+
+    if hunger < 0:
+        return await interaction.response.send_message("Hunger cannot be negative.", ephemeral=True)
+
+    if hunger > dice_amount:
+        return await interaction.response.send_message("Hunger dice cannot exceed total dice.", ephemeral=True)
+
+    normal_count = dice_amount - hunger
+
+    normal_results = [eval_die(random.randint(1, 10)) for _ in range(normal_count)]
+    hunger_results = [eval_die(random.randint(1, 10)) for _ in range(hunger)]
+
+    output = []
+    output.extend(NORMAL_EMOJIS[r] for r in normal_results)
+    output.extend(HUNGER_EMOJIS[r] for r in hunger_results)
+
+    final = " ".join(output)
+
+    await interaction.response.send_message(final)
+# -------------------------------------------------------------------------------------- DICE ROLLER --------------------------------------------------------------------------------
+
 
 # Shutdown bot (owner)
 @bot.command(name='shutdown')
